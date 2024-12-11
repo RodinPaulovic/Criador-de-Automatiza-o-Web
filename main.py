@@ -1,17 +1,30 @@
 import os
 
 def listar_arquivos():
-    arquivos = [f for f in os.listdir() if f.endswith('.txt')]
+    pasta = "Perfil"
+    if not os.path.exists(pasta):
+        os.makedirs(pasta)
+    arquivos = [f for f in os.listdir(pasta) if f.endswith('.txt')]
     return arquivos
 
 def criar_perfil():
+    pasta = "Perfil"
+    if not os.path.exists(pasta):
+        os.makedirs(pasta)
     nome = input("Digite o nome do novo perfil: ")
-    with open(f"{nome}.txt", "w") as arquivo:
+    caminho_arquivo = os.path.join(pasta, f"{nome}.txt")
+    if os.path.exists(caminho_arquivo):
+        print(f"Erro: Já existe um perfil com o nome '{nome}'.")
+        return
+    with open(caminho_arquivo, "w") as arquivo:
         conteudo = input("Digite o conteúdo do perfil: ")
         arquivo.write(conteudo)
     print(f"Perfil '{nome}' criado com sucesso!")
 
 def usar_perfil_existente():
+    pasta = "Perfil"
+    if not os.path.exists(pasta):
+        os.makedirs(pasta)
     arquivos = listar_arquivos()
     if not arquivos:
         print("Nenhum perfil existente encontrado.")
@@ -24,7 +37,7 @@ def usar_perfil_existente():
     try:
         escolha = int(input("Escolha o número correspondente ao perfil: ")) - 1
         if 0 <= escolha < len(arquivos):
-            with open(arquivos[escolha], "r") as arquivo:
+            with open(os.path.join(pasta, arquivos[escolha]), "r") as arquivo:
                 conteudo = arquivo.read()
                 print(f"Conteúdo do perfil '{arquivos[escolha]}':\n{conteudo}")
         else:
