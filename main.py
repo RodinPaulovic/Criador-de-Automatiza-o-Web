@@ -1,5 +1,23 @@
 import os
 
+pre_set = """ 
+import undetected_chromedriver as uc
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+import time
+
+options = uc.ChromeOptions()
+options.headless = False
+driver = uc.Chrome(options=options)
+wait = WebDriverWait(driver, 10)
+time.sleep(1)
+
+def main():
+    # Função principal
+    driver.get("https://www.google.com")
+"""
+
 def listar_arquivos():
     pasta = "Perfil"
     if not os.path.exists(pasta):
@@ -17,8 +35,7 @@ def criar_perfil():
         print(f"Erro: Já existe um perfil com o nome '{nome}'.")
         return
     with open(caminho_arquivo, "w") as arquivo:
-        conteudo = input("Digite o conteúdo do perfil: ")
-        arquivo.write(conteudo)
+        arquivo.write(pre_set)  # Arquivo criado com o código base
     print(f"Perfil '{nome}' criado com sucesso!")
 
 def usar_perfil_existente():
@@ -37,9 +54,29 @@ def usar_perfil_existente():
     try:
         escolha = int(input("Escolha o número correspondente ao perfil: ")) - 1
         if 0 <= escolha < len(arquivos):
-            with open(os.path.join(pasta, arquivos[escolha]), "r") as arquivo:
-                conteudo = arquivo.read()
-                print(f"Conteúdo do perfil '{arquivos[escolha]}':\n{conteudo}")
+            while True:
+                print("\n=== Gerenciador de Perfis ===")
+                print("1. Exibir conteúdo")
+                print("2. Executar conteúdo")
+                print("3. Sair")
+                opcao = input("Escolha uma opção: ").strip()
+
+                if opcao == '1':
+                    with open(os.path.join(pasta, arquivos[escolha]), "r") as arquivo:
+                        conteudo = arquivo.read()
+                        print(f"Conteúdo do perfil '{arquivos[escolha]}':\n{conteudo}")
+                elif opcao == '2':
+                    with open(os.path.join(pasta, arquivos[escolha]), "r") as arquivo:
+                        conteudo = arquivo.read()
+                        try:
+                            exec(conteudo)  # Executa o código Python contido no arquivo
+                        except Exception as e:
+                            print(f"Erro ao executar o código: {e}")
+                elif opcao == '3':
+                    print("Voltando ao menu principal...")
+                    break
+                else:
+                    print("Opção inválida. Tente novamente.")
         else:
             print("Número inválido.")
     except ValueError:

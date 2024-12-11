@@ -1,0 +1,16 @@
+ 
+import undetected_chromedriver as uc
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+import time
+
+options = uc.ChromeOptions()
+options.headless = False
+driver = uc.Chrome(options=options)
+wait = WebDriverWait(driver, 10)
+time.sleep(1)
+
+def main():
+    # Função principal
+    driver.get("https://www.google.com")
